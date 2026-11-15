@@ -145,16 +145,21 @@ El mismo horario, enviado otra vez, responde que el cupo ya está reservado.
 
 ![Cupo ocupado en AulaLibre](evidencias/02-cupo-ocupado.jpg)
 
-### 8.3 Evidencias que faltan
+### 8.3 DynamoDB
+
+Exploración de la tabla `aulalibre-reservas-dev`. El código de cancelación queda como `codigoHash`. Los ítems `CUPO#...` son el candado del horario.
+
+![Elementos de DynamoDB](evidencias/03-dynamodb.jpg)
+
+### 8.4 Evidencias que faltan
 
 Pegar las capturas restantes en este documento antes de entregar:
 
-1. Ítem en DynamoDB (se ve el hash del código, no el código en claro).
-2. Las cuatro funciones Lambda y el rol de `listar`, donde solo aparece `dynamodb:Query` sobre el índice.
-3. VPC, subred pública, Internet Gateway y grupo de seguridad sin entrada.
-4. Instancia EC2 `aulalibre-demo`. Enseguida apagarla.
-5. Tablero de CloudWatch `aulalibre-dev` después de usar el formulario.
-6. Calculadora de precios de AWS con el total mensual. Cargar estos servicios en `us-east-1`:
+1. Las cuatro funciones Lambda y el rol de `listar`, donde solo aparece `dynamodb:Query` sobre el índice.
+2. VPC, subred pública, Internet Gateway y grupo de seguridad sin entrada.
+3. Instancia EC2 `aulalibre-demo`. Enseguida apagarla.
+4. Tablero de CloudWatch `aulalibre-dev` después de usar el formulario.
+5. Calculadora de precios de AWS con el total mensual. Cargar estos servicios en `us-east-1`:
    - EC2: 1× `t3.micro`, 8 horas (no 730), 8 GB gp3.
    - Lambda: 10.000 solicitudes, 128 MB, 200 ms.
    - API Gateway HTTP API: 10.000 solicitudes.
