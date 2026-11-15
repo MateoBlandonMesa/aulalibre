@@ -181,14 +181,17 @@ Tablero `aulalibre-dev` con invocaciones, errores y duración p95 de `crear`, `l
 
 ![Tablero de CloudWatch aulalibre-dev](evidencias/10-cloudwatch.jpg)
 
+Las cuatro alarmas están en estado correcto: tres vigilan errores de Lambda y una vigila que el cargo estimado del mes no supere 1 USD.
+
+![Alarmas de CloudWatch](evidencias/11-alarmas.jpg)
+
 ### 8.8 Evidencias que faltan
 
 Pegar las capturas restantes en este documento antes de entregar:
 
 1. El rol de `listar`, donde solo aparece `dynamodb:Query` sobre el índice.
 2. Reglas de entrada del grupo `aulalibre-ec2`: la lista está vacía.
-3. Las cuatro alarmas: `aulalibre-dev-errores-crear`, `aulalibre-dev-errores-listar`, `aulalibre-dev-errores-cancelar` y `aulalibre-dev-costo-estimado`.
-4. Calculadora de precios de AWS con el total mensual. Cargar estos servicios en `us-east-1`:
+3. Calculadora de precios de AWS con el total mensual. Cargar estos servicios en `us-east-1`:
    - EC2: 1× `t3.micro`, 8 horas (no 730), 8 GB gp3.
    - Lambda: 10.000 solicitudes, 128 MB, 200 ms.
    - API Gateway HTTP API: 10.000 solicitudes.
