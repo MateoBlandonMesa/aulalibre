@@ -1,0 +1,109 @@
+<mxfile host="app.diagrams.net" agent="AulaLibre">
+  <diagram id="aulalibre" name="Arquitectura AulaLibre">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="titulo" value="AulaLibre — Universidad de Antioquia&#10;Andrés Espejo · Mateo Blandón" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=20;fontStyle=1;fontColor=#083628;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="640" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="usuario" value="Usuario&#10;navegador" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0b4f38;fontColor=#ffffff;strokeColor=#083628;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="280" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cf" value="CloudFront&#10;HTTPS · OAC&#10;Price Class 100" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffaf2;strokeColor=#a67c3d;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="280" y="90" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="S3&#10;aulalibre-web-&lt;cuenta&gt;&#10;bloqueado al público" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffaf2;strokeColor=#a67c3d;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="540" y="90" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="api" value="API Gateway&#10;HTTP API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffaf2;strokeColor=#0b4f38;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="280" y="270" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="catalogo" value="Lambda catalogo&#10;GET /salas&#10;sin DynamoDB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef6f1;strokeColor=#0b4f38;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="540" y="210" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="crear" value="Lambda crear&#10;POST /reservas&#10;rol: PutItem" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef6f1;strokeColor=#0b4f38;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="540" y="300" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="listar" value="Lambda listar&#10;GET /reservas&#10;rol: Query del índice" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef6f1;strokeColor=#0b4f38;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="540" y="390" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cancelar" value="Lambda cancelar&#10;DELETE /reservas/{id}&#10;rol: GetItem + DeleteItem" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef6f1;strokeColor=#0b4f38;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="540" y="480" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="db" value="DynamoDB&#10;aulalibre-reservas-dev&#10;pk + GSI listar-index&#10;5+5 RCU/WCU" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#fffaf2;strokeColor=#0b4f38;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="840" y="330" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="cw" value="CloudWatch&#10;logs 7 días&#10;alarmas y tablero" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffaf2;strokeColor=#8d2e2e;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="840" y="90" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="iam" value="IAM&#10;un rol por función&#10;mínimo privilegio" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffaf2;strokeColor=#083628;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="840" y="500" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="vpc" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f7f3ea;strokeColor=#0b4f38;dashed=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="640" width="1020" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="vpcLabel" value="VPC 10.20.0.0/16    ·    la aplicación no entra a esta red    ·    sin NAT Gateway" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontColor=#083628;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="60" y="652" width="720" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="igw" value="Internet&#10;Gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0b4f38;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="70" y="730" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="subnet" value="Subred pública 10.20.1.0/24&#10;ruta 0.0.0.0/0 → Internet Gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#a67c3d;dashed=1;fontSize=13;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="280" y="710" width="520" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2" value="EC2 t3.micro&#10;Amazon Linux 2023&#10;sin SSH, sin rol&#10;se apaga tras la captura" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef6f1;strokeColor=#0b4f38;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="400" y="760" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" style="endArrow=block;html=1;strokeColor=#0b4f38;" edge="1" parent="1" source="usuario" target="cf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1l" value="HTTPS" style="edgeLabel;html=1;fontSize=11;" vertex="1" connectable="0" parent="e1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="endArrow=block;html=1;strokeColor=#a67c3d;" edge="1" parent="1" source="cf" target="s3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2l" value="OAC" style="edgeLabel;html=1;fontSize=11;" vertex="1" connectable="0" parent="e2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" style="endArrow=block;html=1;strokeColor=#0b4f38;" edge="1" parent="1" source="usuario" target="api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3l" value="JSON" style="edgeLabel;html=1;fontSize=11;" vertex="1" connectable="0" parent="e3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" style="endArrow=block;html=1;strokeColor=#0b4f38;" edge="1" parent="1" source="api" target="catalogo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" style="endArrow=block;html=1;strokeColor=#0b4f38;" edge="1" parent="1" source="api" target="crear">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" style="endArrow=block;html=1;strokeColor=#0b4f38;" edge="1" parent="1" source="api" target="listar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" style="endArrow=block;html=1;strokeColor=#0b4f38;" edge="1" parent="1" source="api" target="cancelar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" style="endArrow=block;html=1;strokeColor=#0b4f38;" edge="1" parent="1" source="crear" target="db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" style="endArrow=block;html=1;strokeColor=#0b4f38;" edge="1" parent="1" source="listar" target="db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" style="endArrow=block;html=1;strokeColor=#0b4f38;" edge="1" parent="1" source="cancelar" target="db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" style="endArrow=block;html=1;dashed=1;strokeColor=#8d2e2e;" edge="1" parent="1" source="crear" target="cw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" style="endArrow=block;html=1;dashed=1;strokeColor=#083628;" edge="1" parent="1" source="iam" target="cancelar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" style="endArrow=block;html=1;strokeColor=#0b4f38;" edge="1" parent="1" source="igw" target="subnet">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

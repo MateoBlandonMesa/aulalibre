@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AulaLibre · Reservas de salas</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%230b4f38' width='100' height='100' rx='18'/%3E%3Ctext y='68' x='22' font-size='58' fill='%23f4efe4' font-family='Georgia'%3EA%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,560;1,9..144,520&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div>
+        <p class="eyebrow">Universidad de Antioquia · Cloud Computing</p>
+        <h1>AulaLibre</h1>
+        <p class="lede">
+          Reserva una sala de estudio completa, por una franja de dos horas.
+          El cupo se guarda una sola vez y el tablero se actualiza al momento.
+        </p>
+      </div>
+      <p class="equipo">Andrés Espejo<br />Mateo Blandón</p>
+    </header>
+
+    <main>
+      <section class="panel" aria-labelledby="titulo-reserva">
+        <h2 id="titulo-reserva">Nueva reserva</h2>
+        <form id="formulario">
+          <label>
+            Nombre
+            <input name="nombre" autocomplete="name" required maxlength="80" placeholder="Nombre y apellido" />
+          </label>
+          <label>
+            Documento
+            <input name="documento" inputmode="numeric" required minlength="5" maxlength="12" placeholder="Solo números" />
+            <small>No aparece en el tablero. Sirve para identificar la reserva.</small>
+          </label>
+          <label>
+            Programa
+            <input name="programa" required maxlength="80" placeholder="Ingeniería de Sistemas" />
+          </label>
+          <div class="fila">
+            <label>
+              Sala
+              <select name="sala" required></select>
+            </label>
+            <label>
+              Franja
+              <select name="franja" required></select>
+            </label>
+          </div>
+          <label>
+            Fecha
+            <input name="fecha" type="date" required />
+          </label>
+          <button type="submit" id="enviar">Reservar cupo</button>
+        </form>
+        <p id="aviso" class="aviso" role="alert" hidden></p>
+        <article id="comprobante" class="comprobante" hidden>
+          <p class="eyebrow">Comprobante</p>
+          <h3>Cupo guardado</h3>
+          <p id="comprobante-detalle"></p>
+          <p class="codigo" id="comprobante-codigo"></p>
+          <p>Guarda ese código. Sin él no se puede cancelar la reserva.</p>
+        </article>
+      </section>
+
+      <section class="panel" aria-labelledby="titulo-tablero">
+        <div class="tablero-cabeza">
+          <h2 id="titulo-tablero">Tablero</h2>
+          <label class="fecha-tablero">
+            Día
+            <input id="filtro-fecha" type="date" />
+          </label>
+        </div>
+        <div id="tablero" class="tablero"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>El sitio estático sale de S3 a través de CloudFront. El formulario llama a API Gateway, Lambda y DynamoDB.</p>
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

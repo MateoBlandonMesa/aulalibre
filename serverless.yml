@@ -1,0 +1,503 @@
+org: mateoblandon
+app: aulalibre
+service: aulalibre
+
+provider:
+  name: aws
+  runtime: nodejs24.x
+  architecture: arm64
+  region: us-east-1
+  stage: dev
+  memorySize: 128
+  timeout: 10
+  versionFunctions: false
+  logRetentionInDays: 7
+  httpApi:
+    cors: true
+  environment:
+    RESERVAS_TABLE: ${self:service}-reservas-${sls:stage}
+    LISTAR_INDEX: listar-index
+  stackTags:
+    Project: AulaLibre
+    Course: CloudComputing-UdeA
+    Team: Espejo-Blandon
+
+functions:
+  catalogo:
+    handler: backend/handler.catalogo
+    description: Devuelve salas y franjas. No toca la base de datos.
+    role:
+      Fn::GetAtt: [CatalogoRole, Arn]
+    events:
+      - httpApi:
+          path: /salas
+          method: get
+  crear:
+    handler: backend/handler.crear
+    description: Crea una reserva si el cupo de esa sala y franja está libre.
+    role:
+      Fn::GetAtt: [CrearRole, Arn]
+    events:
+      - httpApi:
+          path: /reservas
+          method: post
+  listar:
+    handler: backend/handler.listar
+    description: Lista reservas con Query sobre el índice, sin Scan.
+    role:
+      Fn::GetAtt: [ListarRole, Arn]
+    events:
+      - httpApi:
+          path: /reservas
+          method: get
+  cancelar:
+    handler: backend/handler.cancelar
+    description: Cancela una reserva si el código coincide y libera el cupo.
+    role:
+      Fn::GetAtt: [CancelarRole, Arn]
+    events:
+      - httpApi:
+          path: /reservas/{id}
+          method: delete
+
+resources:
+  Resources:
+    CatalogoRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: lambda.amazonaws.com
+              Action: sts:AssumeRole
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+    CrearRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: lambda.amazonaws.com
+              Action: sts:AssumeRole
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        Policies:
+          - PolicyName: reservas-crear
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:PutItem
+                  Resource:
+                    Fn::GetAtt: [ReservasTable, Arn]
+
+    ListarRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: lambda.amazonaws.com
+              Action: sts:AssumeRole
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        Policies:
+          - PolicyName: reservas-listar
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:Query
+                  Resource:
+                    Fn::Join:
+                      - ""
+                      - - Fn::GetAtt: [ReservasTable, Arn]
+                        - "/index/listar-index"
+
+    CancelarRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: lambda.amazonaws.com
+              Action: sts:AssumeRole
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        Policies:
+          - PolicyName: reservas-cancelar
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:GetItem
+                    - dynamodb:DeleteItem
+                  Resource:
+                    Fn::GetAtt: [ReservasTable, Arn]
+
+    ReservasTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.RESERVAS_TABLE}
+        BillingMode: PROVISIONED
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: tipoLista
+            AttributeType: S
+          - AttributeName: orden
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: listar-index
+            KeySchema:
+              - AttributeName: tipoLista
+                KeyType: HASH
+              - AttributeName: orden
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+
+    FrontendBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName:
+          Fn::Join:
+            - ""
+            - - "aulalibre-web-"
+              - Ref: AWS::AccountId
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
+        OwnershipControls:
+          Rules:
+            - ObjectOwnership: BucketOwnerEnforced
+
+    FrontendOAC:
+      Type: AWS::CloudFront::OriginAccessControl
+      Properties:
+        OriginAccessControlConfig:
+          Name: aulalibre-${sls:stage}-oac
+          Description: Lectura del frontend solo desde CloudFront
+          OriginAccessControlOriginType: s3
+          SigningBehavior: always
+          SigningProtocol: sigv4
+
+    FrontendCachePolicy:
+      Type: AWS::CloudFront::CachePolicy
+      Properties:
+        CachePolicyConfig:
+          Name: aulalibre-${sls:stage}-cache
+          Comment: Cache de un minuto para actualizar el sitio en la sustentacion
+          DefaultTTL: 60
+          MaxTTL: 300
+          MinTTL: 0
+          ParametersInCacheKeyAndForwardedToOrigin:
+            EnableAcceptEncodingGzip: true
+            EnableAcceptEncodingBrotli: true
+            CookiesConfig:
+              CookieBehavior: none
+            HeadersConfig:
+              HeaderBehavior: none
+            QueryStringsConfig:
+              QueryStringBehavior: none
+
+    FrontendDistribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+        DistributionConfig:
+          Enabled: true
+          Comment: AulaLibre frontend
+          DefaultRootObject: index.html
+          PriceClass: PriceClass_100
+          HttpVersion: http2
+          IPV6Enabled: true
+          Origins:
+            - Id: FrontendS3
+              DomainName: !GetAtt FrontendBucket.RegionalDomainName
+              OriginAccessControlId: !GetAtt FrontendOAC.Id
+              S3OriginConfig:
+                OriginAccessIdentity: ""
+          DefaultCacheBehavior:
+            TargetOriginId: FrontendS3
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            CachedMethods:
+              - GET
+              - HEAD
+            Compress: true
+            CachePolicyId: !Ref FrontendCachePolicy
+          CustomErrorResponses:
+            - ErrorCode: 403
+              ResponseCode: 200
+              ResponsePagePath: /index.html
+              ErrorCachingMinTTL: 10
+          ViewerCertificate:
+            CloudFrontDefaultCertificate: true
+
+    FrontendBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref FrontendBucket
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: LecturaSoloCloudFront
+              Effect: Allow
+              Principal:
+                Service: cloudfront.amazonaws.com
+              Action: s3:GetObject
+              Resource:
+                Fn::Join:
+                  - ""
+                  - - Fn::GetAtt: [FrontendBucket, Arn]
+                    - "/*"
+              Condition:
+                StringEquals:
+                  AWS:SourceArn:
+                    Fn::Join:
+                      - ""
+                      - - "arn:aws:cloudfront::"
+                        - Ref: AWS::AccountId
+                        - ":distribution/"
+                        - Ref: FrontendDistribution
+
+    Vpc:
+      Type: AWS::EC2::VPC
+      Properties:
+        CidrBlock: 10.20.0.0/16
+        EnableDnsSupport: true
+        EnableDnsHostnames: true
+        Tags:
+          - Key: Name
+            Value: aulalibre-vpc
+
+    InternetGateway:
+      Type: AWS::EC2::InternetGateway
+      Properties:
+        Tags:
+          - Key: Name
+            Value: aulalibre-igw
+
+    IgwAttachment:
+      Type: AWS::EC2::VPCGatewayAttachment
+      Properties:
+        VpcId: !Ref Vpc
+        InternetGatewayId: !Ref InternetGateway
+
+    PublicSubnet:
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId: !Ref Vpc
+        CidrBlock: 10.20.1.0/24
+        MapPublicIpOnLaunch: true
+        AvailabilityZone: us-east-1a
+        Tags:
+          - Key: Name
+            Value: aulalibre-publica
+
+    PublicRouteTable:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId: !Ref Vpc
+        Tags:
+          - Key: Name
+            Value: aulalibre-publica
+
+    PublicRoute:
+      Type: AWS::EC2::Route
+      DependsOn: IgwAttachment
+      Properties:
+        RouteTableId: !Ref PublicRouteTable
+        DestinationCidrBlock: 0.0.0.0/0
+        GatewayId: !Ref InternetGateway
+
+    SubnetRouteAssociation:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId: !Ref PublicSubnet
+        RouteTableId: !Ref PublicRouteTable
+
+    InstanceSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: Instancia de demostracion sin trafico de usuarios
+        VpcId: !Ref Vpc
+        SecurityGroupEgress:
+          - IpProtocol: tcp
+            FromPort: 443
+            ToPort: 443
+            CidrIp: 127.0.0.1/32
+            Description: Sin salida util. El grupo exige al menos una regla.
+        Tags:
+          - Key: Name
+            Value: aulalibre-ec2
+
+    DemoInstance:
+      Type: AWS::EC2::Instance
+      DependsOn: PublicRoute
+      Properties:
+        InstanceType: t3.micro
+        ImageId: "{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64}}"
+        SubnetId: !Ref PublicSubnet
+        SecurityGroupIds:
+          - !Ref InstanceSecurityGroup
+        UserData:
+          Fn::Base64: |
+            #!/bin/bash
+            echo "AulaLibre: instancia de demostracion de la VPC. No atiende el trafico de la aplicacion." > /var/tmp/aulalibre-proposito.txt
+        Tags:
+          - Key: Name
+            Value: aulalibre-demo
+
+    ErroresCrearAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: aulalibre-${sls:stage}-errores-crear
+        AlarmDescription: Errores no controlados de la funcion crear
+        Namespace: AWS/Lambda
+        MetricName: Errors
+        Dimensions:
+          - Name: FunctionName
+            Value: !Ref CrearLambdaFunction
+        Statistic: Sum
+        Period: 300
+        EvaluationPeriods: 1
+        Threshold: 1
+        ComparisonOperator: GreaterThanOrEqualToThreshold
+        TreatMissingData: notBreaching
+
+    ErroresListarAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: aulalibre-${sls:stage}-errores-listar
+        AlarmDescription: Errores no controlados de la funcion listar
+        Namespace: AWS/Lambda
+        MetricName: Errors
+        Dimensions:
+          - Name: FunctionName
+            Value: !Ref ListarLambdaFunction
+        Statistic: Sum
+        Period: 300
+        EvaluationPeriods: 1
+        Threshold: 1
+        ComparisonOperator: GreaterThanOrEqualToThreshold
+        TreatMissingData: notBreaching
+
+    ErroresCancelarAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: aulalibre-${sls:stage}-errores-cancelar
+        AlarmDescription: Errores no controlados de la funcion cancelar
+        Namespace: AWS/Lambda
+        MetricName: Errors
+        Dimensions:
+          - Name: FunctionName
+            Value: !Ref CancelarLambdaFunction
+        Statistic: Sum
+        Period: 300
+        EvaluationPeriods: 1
+        Threshold: 1
+        ComparisonOperator: GreaterThanOrEqualToThreshold
+        TreatMissingData: notBreaching
+
+    CostoEstimadoAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: aulalibre-${sls:stage}-costo-estimado
+        AlarmDescription: La cuenta supera 1 USD de cargos estimados en el mes
+        Namespace: AWS/Billing
+        MetricName: EstimatedCharges
+        Dimensions:
+          - Name: Currency
+            Value: USD
+        Statistic: Maximum
+        Period: 21600
+        EvaluationPeriods: 1
+        Threshold: 1
+        ComparisonOperator: GreaterThanOrEqualToThreshold
+        TreatMissingData: notBreaching
+
+    AulaLibreDashboard:
+      Type: AWS::CloudWatch::Dashboard
+      Properties:
+        DashboardName: aulalibre-${sls:stage}
+        DashboardBody:
+          Fn::Join:
+            - ""
+            - - '{"widgets":[{"type":"metric","x":0,"y":0,"width":12,"height":6,"properties":{"title":"Invocaciones","region":"'
+              - Ref: AWS::Region
+              - '","stat":"Sum","period":300,"metrics":[["AWS/Lambda","Invocations","FunctionName","'
+              - Ref: CrearLambdaFunction
+              - '"],["AWS/Lambda","Invocations","FunctionName","'
+              - Ref: ListarLambdaFunction
+              - '"],["AWS/Lambda","Invocations","FunctionName","'
+              - Ref: CancelarLambdaFunction
+              - '"]]}},{"type":"metric","x":12,"y":0,"width":12,"height":6,"properties":{"title":"Errores","region":"'
+              - Ref: AWS::Region
+              - '","stat":"Sum","period":300,"metrics":[["AWS/Lambda","Errors","FunctionName","'
+              - Ref: CrearLambdaFunction
+              - '"],["AWS/Lambda","Errors","FunctionName","'
+              - Ref: ListarLambdaFunction
+              - '"],["AWS/Lambda","Errors","FunctionName","'
+              - Ref: CancelarLambdaFunction
+              - '"]]}},{"type":"metric","x":0,"y":6,"width":24,"height":6,"properties":{"title":"Duracion p95 (ms)","region":"'
+              - Ref: AWS::Region
+              - '","stat":"p95","period":300,"metrics":[["AWS/Lambda","Duration","FunctionName","'
+              - Ref: CrearLambdaFunction
+              - '"],["AWS/Lambda","Duration","FunctionName","'
+              - Ref: ListarLambdaFunction
+              - '"],["AWS/Lambda","Duration","FunctionName","'
+              - Ref: CancelarLambdaFunction
+              - '"]]}}]}'
+
+  Outputs:
+    FrontendUrl:
+      Description: URL publica del sitio
+      Value:
+        Fn::Join:
+          - ""
+          - - "https://"
+            - Fn::GetAtt: [FrontendDistribution, DomainName]
+    FrontendBucketName:
+      Description: Bucket del frontend
+      Value: !Ref FrontendBucket
+    DistributionId:
+      Description: Distribucion de CloudFront
+      Value: !Ref FrontendDistribution
+    ReservasTableName:
+      Description: Tabla de reservas
+      Value: !Ref ReservasTable
+
+plugins:
+  - serverless-offline

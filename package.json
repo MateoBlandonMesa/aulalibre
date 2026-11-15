@@ -1,0 +1,22 @@
+{
+  "name": "aulalibre",
+  "version": "1.0.0",
+  "description": "AulaLibre: reservas de salas de estudio. Frontend en S3/CloudFront, API serverless y DynamoDB. Proyecto final Cloud Computing UdeA 2026.",
+  "private": true,
+  "main": "backend/handler.js",
+  "scripts": {
+    "test": "node --test",
+    "deploy": "serverless deploy",
+    "offline": "serverless offline",
+    "remove": "serverless remove"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.693.0",
+    "@aws-sdk/lib-dynamodb": "^3.693.0"
+  },
+  "devDependencies": {
+    "serverless": "^4.14.4",
+    "serverless-offline": "^14.4.0"
+  }
+}

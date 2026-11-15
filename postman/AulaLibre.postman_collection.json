@@ -1,0 +1,58 @@
+{
+  "info": {
+    "name": "AulaLibre",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "reservaId", "value": "" },
+    { "key": "codigo", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Catalogo",
+      "request": { "method": "GET", "url": "{{baseUrl}}/salas" }
+    },
+    {
+      "name": "Crear reserva",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const body = pm.response.json();",
+              "if (body.id) pm.collectionVariables.set('reservaId', body.id);",
+              "if (body.codigo) pm.collectionVariables.set('codigo', body.codigo);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Ana López\",\n  \"documento\": \"1017250\",\n  \"programa\": \"Ingeniería de Sistemas\",\n  \"sala\": \"biblioteca-central\",\n  \"franja\": \"08-10\",\n  \"fecha\": \"2026-11-20\"\n}"
+        },
+        "url": "{{baseUrl}}/reservas"
+      }
+    },
+    {
+      "name": "Listar por fecha",
+      "request": { "method": "GET", "url": "{{baseUrl}}/reservas?fecha=2026-11-20" }
+    },
+    {
+      "name": "Cancelar",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigo\": \"{{codigo}}\"\n}"
+        },
+        "url": "{{baseUrl}}/reservas/{{reservaId}}"
+      }
+    }
+  ]
+}
