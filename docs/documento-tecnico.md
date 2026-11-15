@@ -151,11 +151,17 @@ Exploración de la tabla `aulalibre-reservas-dev`. El código de cancelación qu
 
 ![Elementos de DynamoDB](evidencias/03-dynamodb.jpg)
 
-### 8.4 Evidencias que faltan
+### 8.4 Funciones Lambda
+
+Las cuatro funciones del proyecto: `aulalibre-dev-cancelar`, `aulalibre-dev-catalogo`, `aulalibre-dev-listar` y `aulalibre-dev-crear`.
+
+![Funciones Lambda de AulaLibre](evidencias/04-lambda.jpg)
+
+### 8.5 Evidencias que faltan
 
 Pegar las capturas restantes en este documento antes de entregar:
 
-1. Las cuatro funciones Lambda y el rol de `listar`, donde solo aparece `dynamodb:Query` sobre el índice.
+1. El rol de `listar`, donde solo aparece `dynamodb:Query` sobre el índice.
 2. VPC, subred pública, Internet Gateway y grupo de seguridad sin entrada.
 3. Instancia EC2 `aulalibre-demo`. Enseguida apagarla.
 4. Tablero de CloudWatch `aulalibre-dev` después de usar el formulario.
