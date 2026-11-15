@@ -175,13 +175,19 @@ Instancia `aulalibre-demo`, tipo `t3.micro`, en la subred pública `aulalibre-pu
 
 ![Instancia EC2 aulalibre-demo](evidencias/09-ec2.jpg)
 
-### 8.7 Evidencias que faltan
+### 8.7 CloudWatch
+
+Tablero `aulalibre-dev` con invocaciones, errores y duración p95 de `crear`, `listar` y `cancelar`.
+
+![Tablero de CloudWatch aulalibre-dev](evidencias/10-cloudwatch.jpg)
+
+### 8.8 Evidencias que faltan
 
 Pegar las capturas restantes en este documento antes de entregar:
 
 1. El rol de `listar`, donde solo aparece `dynamodb:Query` sobre el índice.
 2. Reglas de entrada del grupo `aulalibre-ec2`: la lista está vacía.
-3. Tablero de CloudWatch `aulalibre-dev` después de usar el formulario.
+3. Las cuatro alarmas: `aulalibre-dev-errores-crear`, `aulalibre-dev-errores-listar`, `aulalibre-dev-errores-cancelar` y `aulalibre-dev-costo-estimado`.
 4. Calculadora de precios de AWS con el total mensual. Cargar estos servicios en `us-east-1`:
    - EC2: 1× `t3.micro`, 8 horas (no 730), 8 GB gp3.
    - Lambda: 10.000 solicitudes, 128 MB, 200 ms.
