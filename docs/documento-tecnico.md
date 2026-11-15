@@ -131,18 +131,25 @@ La cifra que debe verse en la calculadora, con la EC2 limitada a unas pocas hora
 
 `scripts/deploy.ps1` despliega la pila, escribe la URL real en `frontend/config.js`, sincroniza el bucket e invalida la caché de CloudFront. `scripts/borrar.ps1` vacía el bucket antes de `serverless remove`, porque CloudFormation no borra un bucket con objetos.
 
-## 8. Evidencias que faltan después del despliegue
+## 8. Evidencias
 
-Pegar las capturas en este documento, o en el PDF exportado, antes de entregar:
+### 8.1 Reserva creada
 
-1. Sitio en la URL de CloudFront, con una reserva creada y el código visible.
-2. El mismo cupo rechazado al intentarlo de nuevo.
-3. Ítem en DynamoDB (se ve el hash del código, no el código en claro).
-4. Las cuatro funciones Lambda y el rol de `listar`, donde solo aparece `dynamodb:Query` sobre el índice.
-5. VPC, subred pública, Internet Gateway y grupo de seguridad sin entrada.
-6. Instancia EC2 `aulalibre-demo`. Enseguida apagarla.
-7. Tablero de CloudWatch `aulalibre-dev` después de usar el formulario.
-8. Calculadora de precios de AWS con el total mensual. Cargar estos servicios en `us-east-1`:
+Sitio en CloudFront con el comprobante y la reserva en el tablero. Código de esta captura: `3176dc`.
+
+![Reserva creada en AulaLibre](evidencias/01-reserva-creada.jpg)
+
+### 8.2 Evidencias que faltan
+
+Pegar las capturas restantes en este documento antes de entregar:
+
+1. El mismo cupo rechazado al intentarlo de nuevo.
+2. Ítem en DynamoDB (se ve el hash del código, no el código en claro).
+3. Las cuatro funciones Lambda y el rol de `listar`, donde solo aparece `dynamodb:Query` sobre el índice.
+4. VPC, subred pública, Internet Gateway y grupo de seguridad sin entrada.
+5. Instancia EC2 `aulalibre-demo`. Enseguida apagarla.
+6. Tablero de CloudWatch `aulalibre-dev` después de usar el formulario.
+7. Calculadora de precios de AWS con el total mensual. Cargar estos servicios en `us-east-1`:
    - EC2: 1× `t3.micro`, 8 horas (no 730), 8 GB gp3.
    - Lambda: 10.000 solicitudes, 128 MB, 200 ms.
    - API Gateway HTTP API: 10.000 solicitudes.

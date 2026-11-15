@@ -23,7 +23,7 @@ body {
     linear-gradient(180deg, #f7f1e6 0%, var(--paper) 40%, #efe4d2 100%);
 }
 
-.top, main, footer { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+.top, main { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
 
 .top {
   display: flex;
@@ -53,20 +53,11 @@ h1 {
 
 .lede { max-width: 46rem; margin: 14px 0 0; font-size: 1.05rem; line-height: 1.5; }
 
-.equipo {
-  margin: 8px 0 0;
-  padding: 14px 16px;
-  border: 1px solid var(--line);
-  background: rgba(255, 250, 242, 0.7);
-  line-height: 1.45;
-  text-align: right;
-}
-
 main {
   display: grid;
   grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
   gap: 18px;
-  padding-bottom: 28px;
+  padding-bottom: 48px;
 }
 
 .panel {
@@ -177,13 +168,6 @@ button:disabled { opacity: 0.6; cursor: wait; }
 
 .cancelar input { max-width: 160px; }
 
-footer {
-  padding: 8px 0 36px;
-  color: #5d675f;
-  font-size: 0.92rem;
-}
-
 @media (max-width: 860px) {
   .top, .tablero-cabeza, .fila, main { display: grid; grid-template-columns: 1fr; }
-  .equipo { text-align: left; }
 }
