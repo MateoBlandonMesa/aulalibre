@@ -240,3 +240,5 @@ Con los roles entendimos el mínimo privilegio de otra forma. Al principio parec
 El doble reserva nos costó pensarlo. No queríamos recorrer la tabla con un `Scan` para ver si el horario estaba libre, porque dos personas podían reservar al mismo tiempo y las dos recibir un sí. Guardar el cupo como un ítem con condición, dentro de una transacción, hace que la segunda petición responda que ese horario ya está ocupado.
 
 La EC2 la pide el enunciado, pero nadie entra a la aplicación por esa máquina. La dejamos creada para la evidencia y la apagamos después de la captura. Tenerla encendida todo el mes sí se notaría en el costo, y el sitio sigue funcionando igual con ella detenida.
+
+Lo que más nos quedó es que la nube nos dejó concentrarnos en la idea. Para una prueba de concepto rápida no tuvimos que comprar servidores ni armar un cuarto de máquinas: con S3, API Gateway y Lambda pasamos del formulario de reservas a un sitio que ya guarda el cupo. El costo, la red y los permisos sí hubo que mirarlos, pero llegaron después. Primero pudimos ver si la idea funcionaba.
