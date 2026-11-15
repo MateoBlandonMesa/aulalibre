@@ -139,17 +139,22 @@ Sitio en CloudFront con el comprobante y la reserva en el tablero. Código de es
 
 ![Reserva creada en AulaLibre](evidencias/01-reserva-creada.jpg)
 
-### 8.2 Evidencias que faltan
+### 8.2 Cupo ocupado
+
+El mismo horario, enviado otra vez, responde que el cupo ya está reservado.
+
+![Cupo ocupado en AulaLibre](evidencias/02-cupo-ocupado.jpg)
+
+### 8.3 Evidencias que faltan
 
 Pegar las capturas restantes en este documento antes de entregar:
 
-1. El mismo cupo rechazado al intentarlo de nuevo.
-2. Ítem en DynamoDB (se ve el hash del código, no el código en claro).
-3. Las cuatro funciones Lambda y el rol de `listar`, donde solo aparece `dynamodb:Query` sobre el índice.
-4. VPC, subred pública, Internet Gateway y grupo de seguridad sin entrada.
-5. Instancia EC2 `aulalibre-demo`. Enseguida apagarla.
-6. Tablero de CloudWatch `aulalibre-dev` después de usar el formulario.
-7. Calculadora de precios de AWS con el total mensual. Cargar estos servicios en `us-east-1`:
+1. Ítem en DynamoDB (se ve el hash del código, no el código en claro).
+2. Las cuatro funciones Lambda y el rol de `listar`, donde solo aparece `dynamodb:Query` sobre el índice.
+3. VPC, subred pública, Internet Gateway y grupo de seguridad sin entrada.
+4. Instancia EC2 `aulalibre-demo`. Enseguida apagarla.
+5. Tablero de CloudWatch `aulalibre-dev` después de usar el formulario.
+6. Calculadora de precios de AWS con el total mensual. Cargar estos servicios en `us-east-1`:
    - EC2: 1× `t3.micro`, 8 horas (no 730), 8 GB gp3.
    - Lambda: 10.000 solicitudes, 128 MB, 200 ms.
    - API Gateway HTTP API: 10.000 solicitudes.
