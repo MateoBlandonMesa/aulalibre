@@ -231,8 +231,12 @@ La colección `postman/AulaLibre.postman_collection.json` trae las mismas llamad
 
 ## 10. Conclusiones
 
-- Una aplicación pequeña ya obliga a decidir red, permisos y costo juntos. El NAT Gateway y el bucket público eran los dos atajos caros o inseguros, y los dos se evitaron.
-- Separar el rol por función hace visible el mínimo privilegio: la función que solo lista no puede borrar, y la que solo entrega el catálogo ni siquiera ve la tabla.
-- El cupo como ítem con condición dentro de una transacción resuelve el doble reserva sin un `Scan` previo y sin una condición de carrera.
-- La EC2 del enunciado puede existir y permanecer apagada. El servicio que usan las personas es serverless y el costo fijo de tenerla encendida no aporta al flujo.
-- Lo que sigue después de desplegar es operativo: capturas, calculadora, video y apagar la instancia. El código y la plantilla ya describen la solución completa.
+Aprendimos que AWS tiene una calculadora para ver, antes de crear nada, cuánto podría costar un proyecto. Al armar la de AulaLibre nos salió 7,06 USD al mes y al principio nos pareció mucho para una demo. Después vimos que esa herramienta no resta la capa gratuita: DynamoDB y las alarmas aparecen con precio, pero en la cuenta entran en lo que no se cobra. Nos sirvió para no llevarnos un susto con la factura y para decidir qué dejar por fuera.
+
+También nos sorprendió que un servicio de red saliera más caro que toda la aplicación. Si hubiéramos metido Lambda dentro de la VPC, tocaba pagar un NAT Gateway de unos 32 USD al mes solo para que la función llegara a DynamoDB. La VPC la dejamos porque el enunciado la pide, y ahí vive la EC2. Las funciones se quedaron por fuera.
+
+Con los roles entendimos el mínimo privilegio de otra forma. Al principio parecía más fácil un solo rol con permiso sobre toda la tabla. Al separarlos, la función que lista solo puede hacer `Query` y la del catálogo ni siquiera ve DynamoDB. Si una función falla o alguien la invoca de más, el daño queda acotado a lo que esa función necesita.
+
+El doble reserva nos costó pensarlo. No queríamos recorrer la tabla con un `Scan` para ver si el horario estaba libre, porque dos personas podían reservar al mismo tiempo y las dos recibir un sí. Guardar el cupo como un ítem con condición, dentro de una transacción, hace que la segunda petición responda que ese horario ya está ocupado.
+
+La EC2 la pide el enunciado, pero nadie entra a la aplicación por esa máquina. La dejamos creada para la evidencia y la apagamos después de la captura. Tenerla encendida todo el mes sí se notaría en el costo, y el sitio sigue funcionando igual con ella detenida.
