@@ -169,15 +169,20 @@ VPC `aulalibre-vpc` (`10.20.0.0/16`), subred pública `aulalibre-publica` (`10.2
 
 ![Grupo de seguridad aulalibre-ec2](evidencias/08-grupo-seguridad.jpg)
 
-### 8.6 Evidencias que faltan
+### 8.6 Instancia EC2
+
+Instancia `aulalibre-demo`, tipo `t3.micro`, en la subred pública `aulalibre-publica` de la VPC `aulalibre-vpc`. En la captura sigue en ejecución.
+
+![Instancia EC2 aulalibre-demo](evidencias/09-ec2.jpg)
+
+### 8.7 Evidencias que faltan
 
 Pegar las capturas restantes en este documento antes de entregar:
 
 1. El rol de `listar`, donde solo aparece `dynamodb:Query` sobre el índice.
 2. Reglas de entrada del grupo `aulalibre-ec2`: la lista está vacía.
-3. Instancia EC2 `aulalibre-demo`. Enseguida apagarla.
-4. Tablero de CloudWatch `aulalibre-dev` después de usar el formulario.
-5. Calculadora de precios de AWS con el total mensual. Cargar estos servicios en `us-east-1`:
+3. Tablero de CloudWatch `aulalibre-dev` después de usar el formulario.
+4. Calculadora de precios de AWS con el total mensual. Cargar estos servicios en `us-east-1`:
    - EC2: 1× `t3.micro`, 8 horas (no 730), 8 GB gp3.
    - Lambda: 10.000 solicitudes, 128 MB, 200 ms.
    - API Gateway HTTP API: 10.000 solicitudes.
