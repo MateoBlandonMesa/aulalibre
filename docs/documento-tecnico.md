@@ -123,7 +123,7 @@ Supuestos de la sustentación: unos pocos miles de llamadas, el sitio de menos d
 | NAT Gateway | No se crea | Se evita un cargo de unos 32 USD al mes. |
 | Route 53 | No se crea | Se evita la zona de unos 0,50 USD al mes. |
 
-La cifra que debe verse en la calculadora, con la EC2 limitada a unas pocas horas y el resto de los servicios en uso de demostración, queda en **0 USD o en unos pocos centavos**. La captura de la calculadora se pega al final de este documento antes de entregar. El instructivo de qué servicios marcar está en la sección 8.
+La calculadora pública no resta la capa gratuita. La estimación de la sección 8.8 muestra **7,06 USD** al mes, casi todo en DynamoDB y CloudWatch. En la cuenta, 10 RCU, 10 WCU, 1 GB de DynamoDB, las cuatro alarmas y las 8 horas de `t3.micro` siguen dentro de la franquicia, así que el cargo esperado de la demo es de centavos o cero.
 
 ## 7. Infraestructura como código
 
@@ -185,21 +185,32 @@ Las cuatro alarmas están en estado correcto: tres vigilan errores de Lambda y u
 
 ![Alarmas de CloudWatch](evidencias/11-alarmas.jpg)
 
-### 8.8 Evidencias que faltan
+### 8.8 Calculadora de precios
+
+Estimación exportada el 15 de noviembre de 2026, región `us-east-1`. Adelantado **0,00 USD**. Mensual **7,06 USD**. Doce meses **84,72 USD**.
+
+| Servicio | Configuración | Mensual |
+| --- | --- | --- |
+| Amazon EC2 | 1× `t3.micro`, Linux, On-Demand, 8 horas al mes | 0,08 USD |
+| AWS Lambda | 10.000 solicitudes | 0,00 USD |
+| Amazon API Gateway | HTTP API, 10.000 solicitudes | 0,01 USD |
+| Amazon S3 | 1 GB Standard y 10.000 GET | 0,03 USD |
+| Amazon CloudFront | 1 GB de salida a internet | 0,09 USD |
+| Amazon DynamoDB | Tabla Standard, 1 GB, capacidad provisionada | 5,95 USD |
+| Amazon CloudWatch | 1 GB de logs, 4 alarmas estándar y 1 tablero | 0,90 USD |
+
+El resumen de DynamoDB nombra un plazo de un año y el adelantado queda en 0,00 USD: no hay capacidad reservada comprada. Esos 5,95 USD son 10 RCU y 10 WCU durante el mes. En CloudWatch los eventos móviles OTEL están en cero; el monto sale del GB de logs y de las cuatro alarmas. La calculadora no descuenta la capa gratuita.
+
+![Estimación de AWS Pricing Calculator](evidencias/12-calculadora-1.jpg)
+
+Archivos exportados: [12-calculadora.pdf](evidencias/12-calculadora.pdf) y [12-calculadora.json](evidencias/12-calculadora.json). Enlace de la estimación: [calculator.aws](https://calculator.aws/#/estimate?id=638f31ff24622ccd72f57d39e6b3a5663d1c34c0).
+
+### 8.9 Evidencias que faltan
 
 Pegar las capturas restantes en este documento antes de entregar:
 
 1. El rol de `listar`, donde solo aparece `dynamodb:Query` sobre el índice.
 2. Reglas de entrada del grupo `aulalibre-ec2`: la lista está vacía.
-3. Calculadora de precios de AWS con el total mensual. Cargar estos servicios en `us-east-1`:
-   - EC2: 1× `t3.micro`, 8 horas (no 730), 8 GB gp3.
-   - Lambda: 10.000 solicitudes, 128 MB, 200 ms.
-   - API Gateway HTTP API: 10.000 solicitudes.
-   - DynamoDB provisionado: 10 RCU, 10 WCU, 1 GB.
-   - S3 Standard: 1 GB, 10.000 GET.
-   - CloudFront: 1 GB de salida, Price Class 100.
-   - CloudWatch: 4 alarmas y 1 GB de logs.
-   - Activar en la calculadora la opción de capa gratuita, si aparece, y capturar el total.
 
 El video (1–3 minutos) muestra el sitio desplegado: abrir CloudFront, reservar, chocar con el cupo ocupado, cancelar con el código y, unos segundos, la tabla y el tablero de CloudWatch.
 

@@ -1,0 +1,147 @@
+{
+	"Name": "My Estimate",
+	"Total Cost": {
+		"monthly": "7.06",
+		"upfront": "0.00",
+		"12 months": "84.72"
+	},
+	"Metadata": {
+		"Currency": "USD",
+		"Locale": "en_US",
+		"Created On": "11/15/2026",
+		"Legal Disclaimer": "AWS Pricing Calculator provides only an estimate of your AWS fees and doesn't include any taxes that might apply. Your actual fees depend on a variety of factors, including your actual usage of AWS services.",
+		"Share Url": "https://calculator.aws/#/estimate?id=638f31ff24622ccd72f57d39e6b3a5663d1c34c0"
+	},
+	"Groups": {
+		"Services": [
+			{
+				"Service Name": "Amazon EC2 ",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.08",
+					"upfront": "0.00",
+					"12 months": "1.00"
+				},
+				"Properties": {
+					"Tenancy": "Shared Instances",
+					"Operating system": "Linux",
+					"Workload": "Consistent, Number of instances: 1",
+					"Advance EC2 instance": "t3.micro",
+					"Pricing strategy": "On-Demand Utilization: 8 Hours/Month",
+					"Enable monitoring": "disabled",
+					"DT Inbound: Not selected": "0 TB per month",
+					"DT Outbound: Not selected": "0 TB per month",
+					"DT Intra-Region:": "0 TB per month"
+				}
+			},
+			{
+				"Service Name": "AWS Lambda",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.00",
+					"upfront": "0.00",
+					"12 months": "0.00"
+				},
+				"Properties": {
+					"Architecture": "x86",
+					"Invoke Mode": "Buffered",
+					"Amount of ephemeral storage allocated": "512 MB",
+					"Number of requests": "10000 per month"
+				}
+			},
+			{
+				"Service Name": "Amazon API Gateway",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.01",
+					"upfront": "0.00",
+					"12 months": "0.12"
+				},
+				"Properties": {
+					"HTTP API requests units": "thousands",
+					"Average size of each request": "34 KB",
+					"REST API request units": "millions",
+					"Cache memory size (GB)": "None",
+					"WebSocket message units": "thousands",
+					"Average message size": "32 KB",
+					"Requests": "10 per month"
+				}
+			},
+			{
+				"Service Name": "S3 Standard",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.03",
+					"upfront": "0.00",
+					"12 months": "0.36"
+				},
+				"Properties": {
+					"S3 Standard storage": "1 GB per month",
+					"GET, SELECT, and all other requests from S3 Standard": "10000"
+				}
+			},
+			{
+				"Service Name": "Data Transfer",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.00",
+					"upfront": "0.00",
+					"12 months": "0.00"
+				},
+				"Properties": {}
+			},
+			{
+				"Service Name": "Amazon CloudFront",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.09",
+					"upfront": "0.00",
+					"12 months": "1.08"
+				},
+				"Properties": {
+					"Data transfer out to internet": "1 GB per month"
+				}
+			},
+			{
+				"Service Name": "DynamoDB provisioned capacity",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "5.95",
+					"upfront": "0.00",
+					"12 months": "71.40"
+				},
+				"Properties": {
+					"Table class": "Standard",
+					"Average item size (all attributes)": "1 KB",
+					"Write reserved capacity term": "1 year",
+					"Read reserved capacity term": "1 year",
+					"Data storage size": "1 GB"
+				}
+			},
+			{
+				"Service Name": "Amazon CloudWatch",
+				"Region": "US East (N. Virginia)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.90",
+					"upfront": "0.00",
+					"12 months": "10.85"
+				},
+				"Properties": {
+					"Number of mobile OTEL events and spans or spans per visit": "0",
+					"Mobile sampling rate": "0",
+					"Standard Logs: Data Ingested": "1 GB",
+					"Number of Standard Resolution Alarm Metrics": "4",
+					"Number of Dashboards": "1"
+				}
+			}
+		]
+	}
+}
